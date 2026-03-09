@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 30% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 10%;
+
+    --primary: 210 100% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 93%;
+    --secondary-foreground: 220 30% 10%;
+
+    --muted: 220 15% 93%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 170 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 210 100% 45%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom tokens */
+    --bank-navy: 220 40% 13%;
+    --bank-navy-foreground: 220 20% 95%;
+    --bank-gold: 40 85% 55%;
+    --bank-gold-foreground: 40 60% 15%;
+    --bank-success: 145 60% 42%;
+    --bank-danger: 0 72% 51%;
+    --gradient-card: linear-gradient(135deg, hsl(210 100% 45%), hsl(200 90% 55%));
+    --gradient-gold: linear-gradient(135deg, hsl(35 80% 50%), hsl(45 90% 60%));
+    --gradient-navy: linear-gradient(135deg, hsl(220 40% 13%), hsl(230 35% 22%));
+    --gradient-accent: linear-gradient(135deg, hsl(170 60% 45%), hsl(190 70% 50%));
+    --shadow-card: 0 4px 24px -4px hsl(220 40% 13% / 0.08);
+    --shadow-elevated: 0 8px 32px -8px hsl(220 40% 13% / 0.12);
+  }
+
+  .dark {
+    --background: 220 30% 6%;
+    --foreground: 220 20% 95%;
+    --card: 220 30% 10%;
+    --card-foreground: 220 20% 95%;
+    --popover: 220 30% 10%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 210 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 25% 15%;
+    --secondary-foreground: 220 20% 95%;
+    --muted: 220 25% 15%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 170 60% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 210 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .bank-card-gradient {
+    background: var(--gradient-navy);
+  }
+
+  .bank-primary-gradient {
+    background: var(--gradient-card);
+  }
+
+  .bank-gold-gradient {
+    background: var(--gradient-gold);
+  }
+
+  .bank-accent-gradient {
+    background: var(--gradient-accent);
+  }
+
+  .bank-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .bank-shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+}
