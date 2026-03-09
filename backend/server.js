@@ -16,6 +16,10 @@ app.use(express.json());
 // Connect to MongoDB
 connectDB();
 
+app.get("/", (req, res) => {
+    res.send("Mini-Bank Backend is Running!");
+});
+
 /* ------------------ Signup ------------------ */
 app.post("/signup", async (req, res) => {
     try {
