@@ -11,10 +11,12 @@ const Signup = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
+  // Validation function
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!username.trim()) errs.username = "Username is required.";
     if (!pin) errs.pin = "PIN is required.";
+    else if (!/^\d{4}$/.test(pin)) errs.pin = "PIN must be 4 digits.";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -24,39 +26,28 @@ const Signup = () => {
     if (!validate()) return;
 
     setLoading(true);
-    const payload = { username: username.trim(), pin };
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch("http://localhost:5000/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ username: username.trim(), pin }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        toast.success("Account created successfully");
+        // Optional: Save user in localStorage
+        // localStorage.setItem("user", JSON.stringify({ username: data.username, userId: data.userId }));
+
+        toast.success("Account created successfully!");
         navigate("/login");
-        return;
+      } else {
+        toast.error(data.message || "Signup failed.");
       }
-      // If backend returned an error, try to get message
-      const data = await res.json().catch(() => null);
-      // If 404 (no backend), fall through to localStorage
-      if (res.status !== 404) {
-        toast.error(data?.message || "Registration failed.");
-        return;
-      }
-      throw new Error("no backend");
-    } catch {
-      const existing = JSON.parse(localStorage.getItem("minibank_users") || "[]");
-      if (existing.find((u: any) => u.username === payload.username)) {
-        toast.error("Username already exists.");
-        setLoading(false);
-        return;
-      }
-      existing.push(payload);
-      localStorage.setItem("minibank_users", JSON.stringify(existing));
-      toast.success("Account created successfully");
-      navigate("/login");
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Could not connect to server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -64,12 +55,14 @@ const Signup = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
+      {/* Background circles */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-sm px-6">
+        {/* Logo */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
             <Building2 className="h-7 w-7 text-primary-foreground" />
@@ -83,6 +76,7 @@ const Signup = () => {
         >
           <h2 className="text-lg font-semibold text-foreground text-center">Create Account</h2>
 
+          {/* Username */}
           <div>
             <label className="mb-1 block text-sm font-medium text-foreground">Username</label>
             <input
@@ -95,6 +89,7 @@ const Signup = () => {
             {errors.username && <p className="mt-1 text-xs text-destructive">{errors.username}</p>}
           </div>
 
+          {/* PIN */}
           <div>
             <label className="mb-1 block text-sm font-medium text-foreground">PIN</label>
             <div className="relative">
@@ -102,7 +97,8 @@ const Signup = () => {
                 type={showPin ? "text" : "password"}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="Enter PIN"
+                placeholder="Enter 4-digit PIN"
+                maxLength={4}
                 className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
               <button

@@ -4,52 +4,19 @@ const cors = require("cors");
 require("dotenv").config();
 
 const connectDB = require("./config/db.js");
+const User = require("./models/User.js");
+const Transaction = require("./models/Transaction.js");
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
 
-
-/* ------------------ User Schema ------------------ */
-
-const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    pin: {
-        type: String,
-        required: true
-    }
-});
-
-const User = mongoose.model("User", userSchema);
-
-
-/* ------------------ Transaction Schema ------------------ */
-
-const transactionSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
-    date: String,
-    description: String,
-    amount: Number,
-    category: String,
-    type: String
-});
-
-const Transaction = mongoose.model("Transaction", transactionSchema);
-
-
 /* ------------------ Signup ------------------ */
-
 app.post("/signup", async (req, res) => {
     try {
         const { username, pin } = req.body;
@@ -84,7 +51,8 @@ app.post("/login", async (req, res) => {
 
         res.json({
             message: "Login successful",
-            userId: user._id
+            userId: user._id,
+            username: user.username
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

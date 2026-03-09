@@ -24,40 +24,26 @@ const Login = () => {
     if (!validate()) return;
 
     setLoading(true);
-    const payload = { username: username.trim(), pin };
 
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ username: username.trim(), pin }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         localStorage.setItem("minibank_user", data.username || username.trim());
         toast.success("Login successful!");
         navigate("/dashboard");
-        return;
-      }
-      const data = await res.json().catch(() => null);
-      if (res.status !== 404) {
-        toast.error(data?.message || "Invalid credentials.");
-        return;
-      }
-      throw new Error("no backend");
-    } catch {
-      const users = JSON.parse(localStorage.getItem("minibank_users") || "[]");
-      const found = users.find(
-        (u: any) => u.username === username.trim() && u.pin === pin
-      );
-      if (found) {
-        localStorage.setItem("minibank_user", found.username);
-        toast.success("Login successful!");
-        navigate("/dashboard");
       } else {
-        toast.error("Invalid username or PIN.");
+        toast.error(data.message || "Invalid username or PIN.");
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Could not connect to server. Please try again.");
     } finally {
       setLoading(false);
     }

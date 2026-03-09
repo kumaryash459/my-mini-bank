@@ -1,12 +1,10 @@
 import { useState } from "react";
 import type { Transaction, Category, TransactionType } from "@/services/bankDataService";
-import { X, Send, AlertTriangle, Loader2 } from "lucide-react";
+import { X, Send, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIES: Category[] = ["Food", "Transport", "Shopping", "Bills and Utilities", "Entertainment", "Health", "Salary", "Cashback Wallet", "Other"];
 const TYPES: TransactionType[] = ["credit", "debit"];
-
-const BACKEND_URL = "http://localhost:5000";
 
 interface Props {
   onSubmit: (txn: Transaction) => void;
@@ -21,44 +19,11 @@ const AddTransactionForm = ({ onSubmit, onClose, userName }: Props) => {
   const [category, setCategory] = useState<Category>("Other");
   const [type, setType] = useState<TransactionType>("debit");
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim() || !amount) return;
-
-    const txn = { date, description: description.trim(), amount: Number(amount), category, type };
-
-    setIsSubmitting(true);
-    try {
-      const response = await fetch(`${BACKEND_URL}/add-transaction`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: userName,
-          date: txn.date,
-          description: txn.description,
-          amount: txn.amount,
-          category: txn.category,
-          type: txn.type,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        onSubmit(txn);
-        toast.success("Transaction saved to database!");
-      } else {
-        toast.error(data.error || "Failed to save transaction");
-      }
-    } catch (error) {
-      console.error("Error saving transaction:", error);
-      toast.error("Could not connect to server. Transaction saved locally only.");
-      onSubmit(txn);
-    } finally {
-      setIsSubmitting(false);
-    }
+    onSubmit({ date, description: description.trim(), amount: Number(amount), category, type });
   };
 
   const handleSendToCashmate = () => {
@@ -116,8 +81,8 @@ const AddTransactionForm = ({ onSubmit, onClose, userName }: Props) => {
                     type="button"
                     onClick={() => setType(t)}
                     className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${type === t
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-card text-foreground hover:bg-secondary"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-foreground hover:bg-secondary"
                       }`}
                   >
                     {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -128,14 +93,10 @@ const AddTransactionForm = ({ onSubmit, onClose, userName }: Props) => {
             <div className="flex gap-2">
               <button
                 type="submit"
-                disabled={!description.trim() || !amount || isSubmitting}
-                className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+                disabled={!description.trim() || !amount}
+                className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
               >
-                {isSubmitting ? (
-                  <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-                ) : (
-                  "Add Transaction"
-                )}
+                Add Transaction
               </button>
               <button
                 type="button"
